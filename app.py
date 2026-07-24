@@ -18,14 +18,16 @@ import traceback
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from anthropic import Anthropic
+from google import genai
 
 # ----------------------------- CONFIG ----------------------------------
 
 st.set_page_config(page_title="AI Data Insights Assistant", layout="wide")
-MODEL = "claude-sonnet-4-6"
+MODEL = "gemini-2.5-flash"
 
-client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+# Use GEMINI_API_KEY from environment or streamlit secrets.
+api_key = os.environ.get("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
 
 # Only these names are allowed inside the generated code's exec() sandbox.
 SAFE_BUILTINS = {"len": len, "sum": sum, "min": min, "max": max, "round": round,
@@ -64,12 +66,11 @@ Return ONLY the code, no explanation, no markdown fences.
 
 
 def ask_llm_for_code(question: str, df: pd.DataFrame) -> str:
-    resp = client.messages.create(
+    response = client.models.generate_content(
         model=MODEL,
-        max_tokens=500,
-        messages=[{"role": "user", "content": build_prompt(question, df)}],
+        contents=build_prompt(question, df),
     )
-    code = "".join(block.text for block in resp.content if block.type == "text")
+    code = response.text
     return code.strip().strip("`").replace("python\n", "", 1)
 
 
