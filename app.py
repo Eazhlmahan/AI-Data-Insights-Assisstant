@@ -23,7 +23,7 @@ from google import genai
 # ----------------------------- CONFIG ----------------------------------
 
 st.set_page_config(page_title="AI Data Insights Assistant", layout="wide")
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-1.5-flash"
 
 # Use GEMINI_API_KEY from environment or streamlit secrets.
 api_key = os.environ.get("GEMINI_API_KEY")
