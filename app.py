@@ -69,6 +69,7 @@ def ask_llm_for_code(question: str, df: pd.DataFrame) -> str:
     response = client.models.generate_content(
         model=MODEL,
         contents=build_prompt(question, df),
+        config={"http_options": {"api_version": "v1beta"}}
     )
     code = response.text
     return code.strip().strip("`").replace("python\n", "", 1)
